@@ -1,0 +1,111 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Café Receipt | Crimson Café{% endblock %}
+
+{% block content %}
+
+<section class="cafe-receipt">
+
+    <p class="eyebrow">
+        INTERNAL CAFÉ RECEIPT
+    </p>
+
+    <h1>
+        {{ order.order_number }}
+    </h1>
+
+    <!-- Customer Information -->
+    <div class="receipt-details">
+
+        <p>
+            <strong>Customer:</strong>
+            {{ order.customer_name }}
+        </p>
+
+        <p>
+            <strong>Contact:</strong>
+            {{ order.contact_number }}
+        </p>
+
+        <p>
+            <strong>Order:</strong>
+            {{ order.order_type }}
+            {% if order.table_number %}
+                / Table {{ order.table_number }}
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>Order status:</strong>
+            {{ order.order_status }}
+        </p>
+
+        <p>
+            <strong>Payment:</strong>
+            {{ order.payment_method }} / {{ order.payment_status }}
+        </p>
+
+        <p>
+            <strong>Reference:</strong>
+            {{ order.transaction_reference }}
+        </p>
+
+    </div>
+
+    <hr>
+
+    <!-- Ordered Products -->
+    <div class="receipt-items">
+
+        {% for item in items %}
+
+        <p>
+            <strong>
+                {{ item.quantity }} x {{ item.product_name }}
+            </strong>
+
+            <span>
+                ₱{{ '%.2f'|format(item.subtotal) }}
+            </span>
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+    <hr>
+
+    <!-- Total -->
+    <h2>
+        Total: ₱{{ '%.2f'|format(order.total) }}
+    </h2>
+
+    <!-- Special Instructions -->
+    {% if order.notes %}
+
+    <p>
+        <strong>Special instructions:</strong>
+        {{ order.notes }}
+    </p>
+
+    {% endif %}
+
+    <!-- Receipt Actions -->
+    <div class="receipt-actions">
+
+        <button class="button secondary"
+                onclick="window.print()">
+            Print café receipt
+        </button>
+
+        <a class="button primary"
+           href="{{ url_for('admin_dashboard') }}">
+            Back to dashboard
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

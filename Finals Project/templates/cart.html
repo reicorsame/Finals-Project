@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Cart | Crimson Café{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">YOUR ORDER</p><h1>Shopping<br><em>cart.</em></h1></section>
+<section class="cart-page">
+{% if items %}
+<form action="{{ url_for('update_cart') }}" method="post">
+  {% for item in items %}
+  <div class="cart-row">
+    <img src="{{ url_for('static', filename='img/' + item.product.image) }}" alt="">
+    <div><h3>{{ item.product.name }}</h3><p>₱{{ '%.2f'|format(item.product.price) }} each</p></div>
+    <input type="number" name="quantity_{{ item.product.id }}" value="{{ item.quantity }}" min="0">
+    <strong>₱{{ '%.2f'|format(item.line_total) }}</strong>
+    <a class="remove" href="{{ url_for('remove_from_cart', product_id=item.product.id) }}">Remove</a>
+  </div>
+  {% endfor %}
+  <button class="button secondary">Update cart</button>
+</form>
+<div class="cart-total"><span>Total</span><strong>₱{{ '%.2f'|format(total) }}</strong></div>
+<a class="button primary" href="{{ url_for('checkout') }}">Proceed to checkout</a>
+{% else %}
+<p>Your cart is empty.</p><a class="button secondary" href="{{ url_for('menu') }}">View menu</a>
+{% endif %}
+</section>
+{% endblock %}

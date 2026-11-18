@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Pay with GCash | Crimson Café{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">GCASH PAYMENT</p><h1>Approve your<br><em>payment.</em></h1></section>
+<section class="checkout-page">
+  <form method="post" class="checkout-form">
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    <p>Pay <strong>₱{{ '%.2f'|format(total) }}</strong> to <strong>Crimson Café</strong> from GCash number <strong>{{ masked }}</strong>.</p>
+    <p class="payment-note">Demo only: this step stands in for approving the payment in the GCash app. Nothing is really charged.</p>
+    {% if not error %}<button class="button primary" name="action" value="approve">Approve payment</button>{% endif %}
+    <button class="button secondary" name="action" value="cancel">{% if error %}Back to checkout{% else %}Cancel{% endif %}</button>
+  </form>
+  <div class="checkout-summary"><h2>Order summary</h2>{% for item in items %}<p>{{ item.product.name }} x {{ item.quantity }} <span>₱{{ '%.2f'|format(item.line_total) }}</span></p>{% endfor %}<hr><strong>Total: ₱{{ '%.2f'|format(total) }}</strong></div>
+</section>
+{% endblock %}

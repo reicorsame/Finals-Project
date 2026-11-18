@@ -1,0 +1,235 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | Crimson Café{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">CRIMSON CAFÉ / ADMIN DASHBOARD</p>
+            <h1>Manage the<br><em>café.</em></h1>
+        </div>
+        <a class="button secondary" href="{{ url_for('admin_logout') }}">Logout</a>
+    </div>
+
+    <!-- Dashboard Statistics -->
+    <div class="stats">
+        <div>
+            <small>Total orders</small>
+            <strong>{{ stats.orders }}</strong>
+        </div>
+        <div>
+            <small>Total products</small>
+            <strong>{{ stats.products }}</strong>
+        </div>
+        <div>
+            <small>Pending orders</small>
+            <strong>{{ stats.pending }}</strong>
+        </div>
+        <div>
+            <small>Completed orders</small>
+            <strong>{{ stats.completed }}</strong>
+        </div>
+        <div>
+            <small>Recorded sales</small>
+            <strong>₱{{ '%.2f'|format(stats.sales) }}</strong>
+        </div>
+    </div>
+
+    
+<form class="admin-form"
+      action="{{ url_for('admin_add_product') }}"
+      method="post"
+      enctype="multipart/form-data">
+
+    <input name="name"
+           placeholder="Product name"
+           required>
+
+    <input name="description"
+           placeholder="Description"
+           required>
+
+    <input name="price"
+           type="number"
+           step="0.01"
+           placeholder="Price"
+           required>
+
+    <div class="admin-upload-field">
+        <label for="product-image">Product Image</label>
+        <input id="product-image"
+               type="file"
+               name="image"
+               accept="image/png,image/jpeg,image/webp,image/gif"
+               required>
+    </div>
+
+    <input name="category"
+           placeholder="Category"
+           required>
+
+    <button class="button primary">Add product</button>
+
+</form>
+
+    
+<!-- Manage Products -->
+<div class="admin-section">
+    <h2>Products</h2>
+
+    <div class="admin-product-list">
+
+        {% for product in products %}
+
+        <form class="admin-product-card"
+              action="{{ url_for('admin_edit_product', product_id=product.id) }}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <div class="admin-product-fields">
+
+                <div class="admin-field">
+                    <label>Product Name</label>
+                    <input name="name"
+                           value="{{ product.name }}"
+                           required>
+                </div>
+
+                <div class="admin-field description-field">
+                    <label>Description</label>
+                    <textarea name="description"
+                              rows="3"
+                              required>{{ product.description }}</textarea>
+                </div>
+
+                <div class="admin-field">
+                    <label>Price (₱)</label>
+                    <input name="price"
+                           type="number"
+                           step="0.01"
+                           value="{{ product.price }}"
+                           required>
+                </div>
+
+                <div class="admin-field">
+                    <label>Category</label>
+                    <input name="category"
+                           value="{{ product.category }}"
+                           required>
+                </div>
+
+                <div class="admin-field image-field">
+                    <label>Product Image</label>
+
+                    <img class="admin-product-preview"
+                         src="{{ url_for('static', filename='img/' + product.image) }}"
+                         alt="{{ product.name }}">
+
+                    <input type="file"
+                           name="image"
+                           accept="image/png,image/jpeg,image/webp,image/gif">
+
+                    <small>Leave empty to keep current image.</small>
+                </div>
+
+                <div class="admin-field availability-field">
+                    <label>Availability</label>
+
+                    <label class="check">
+                        <input type="checkbox"
+                               name="availability"
+                               value="1"
+                               {% if product.availability %}checked{% endif %}>
+                        Available
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="admin-product-actions">
+
+                <button type="submit" class="button secondary">
+                    Save Changes
+                </button>
+
+                <button type="submit"
+                        class="remove"
+                        formaction="{{ url_for('admin_delete_product', product_id=product.id) }}"
+                        formmethod="post"
+                        formnovalidate
+                        onclick="return confirm('Are you sure you want to delete this product?')">
+                    Delete Product
+                </button>
+
+            </div>
+
+        </form>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+    <!-- Manage Orders -->
+    <div class="admin-section">
+        <h2>Orders</h2>
+
+        {% for order in orders %}
+
+        <div class="order-row">
+
+            <div>
+                <strong>{{ order.order_number }}</strong>
+
+                <p>
+                    {{ order.customer_name }} /
+                    {{ order.order_type }} /
+                    {{ order.payment_method }}
+                </p>
+
+                <small>
+                    {{ order.created_at }} /
+                    ₱{{ '%.2f'|format(order.total) }}
+                </small>
+            </div>
+
+            <form action="{{ url_for('admin_update_order', order_id=order.id) }}"
+                  method="post">
+
+                <select name="order_status">
+                    <option {% if order.order_status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option {% if order.order_status == 'Preparing' %}selected{% endif %}>Preparing</option>
+                    <option {% if order.order_status == 'Ready for Pickup' %}selected{% endif %}>Ready for Pickup</option>
+                    <option {% if order.order_status == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option {% if order.order_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+
+                <select name="payment_status">
+                    <option {% if order.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option {% if order.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
+                    <option {% if order.payment_status == 'Unpaid' %}selected{% endif %}>Unpaid</option>
+                </select>
+
+                <button class="button secondary">Update</button>
+
+                <a class="button secondary"
+                   href="{{ url_for('cafe_receipt', order_number=order.order_number) }}">
+                    Café receipt
+                </a>
+
+            </form>
+
+        </div>
+
+        {% else %}
+
+        <p>No orders yet.</p>
+
+        {% endfor %}
+    </div>
+
+</section>
+{% endblock %}

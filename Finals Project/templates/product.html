@@ -1,0 +1,81 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ product.name }} | Crimson Café
+{% endblock %}
+
+{% block content %}
+
+<section class="product-page">
+
+    <a class="back" href="{{ url_for('menu') }}">
+        ← Back to menu
+    </a>
+
+    <div class="product-detail">
+
+        <!-- Product Image -->
+        <img
+            src="{{ url_for('static', filename='img/' + product.image) }}"
+            alt="{{ product.name }}"
+        >
+
+        <!-- Product Information -->
+        <div>
+
+            <p class="eyebrow">
+                {{ product.category|title }}
+            </p>
+
+            <h1>
+                {{ product.name }}
+            </h1>
+
+            <strong class="price">
+                ₱{{ '%.2f'|format(product.price) }}
+            </strong>
+
+            <p class="lead">
+                {{ product.description }}
+            </p>
+
+            <p>
+                {{ product.description }}
+                Made fresh for pickup at Crimson Café.
+            </p>
+
+            <p class="prep-time">
+                {{ prep }}
+            </p>
+
+            <!-- Add to Cart -->
+            <form
+                class="buy-form"
+                action="{{ url_for('add_to_cart', product_id=product.id) }}"
+                method="post"
+            >
+
+                <label>
+                    Quantity
+                    <input
+                        type="number"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                    >
+                </label>
+
+                <button class="button primary" type="submit">
+                    Add to cart
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
