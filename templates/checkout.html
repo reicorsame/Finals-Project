@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Checkout | Crimson Café{% endblock %}
+{% block content %}
+{% set f = form or {} %}
+<section class="page-heading"><p class="eyebrow">CHECKOUT</p><h1>Almost<br><em>ready.</em></h1></section>
+<section class="checkout-page">
+  <form method="post" class="checkout-form">
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    <label>Name<input name="customer_name" value="{{ f.get('customer_name', '') }}" required></label>
+    <label>Contact number<input name="contact_number" value="{{ f.get('contact_number', '') }}" required></label>
+    <label>Order type<select name="order_type"><option {% if f.get('order_type') == 'Takeout' %}selected{% endif %}>Takeout</option><option {% if f.get('order_type') == 'Dine-in' %}selected{% endif %}>Dine-in</option></select></label>
+    <label>Table number (for dine-in)<input name="table_number" value="{{ f.get('table_number', '') }}"></label>
+    <label>Order notes<textarea name="notes">{{ f.get('notes', '') }}</textarea></label>
+
+    <fieldset class="payment-box">
+      <legend>Payment</legend>
+      <label>Payment method
+        <select name="payment_method" id="paymentMethod">
+          <option value="gcash" {% if f.get('payment_method', 'gcash') == 'gcash' %}selected{% endif %}>GCash</option>
+          <option value="card" {% if f.get('payment_method') == 'card' %}selected{% endif %}>Credit / debit card</option>
+        </select>
+      </label>
+
+      <div class="pay-panel" data-panel="gcash">
+        <label>GCash mobile number<input name="gcash_number" type="tel" inputmode="tel" autocomplete="tel" placeholder="0917 123 4567" value="{{ f.get('gcash_number', '') }}"></label>
+        <p class="payment-note">You'll approve the payment on the next step. Demo: nothing is really charged. Test number <strong>0900 000 0000</strong> is declined; any other valid mobile number is approved.</p>
+      </div>
+
+      <div class="pay-panel" data-panel="card">
+        <label>Name on card<input name="card_name" autocomplete="cc-name" value="{{ f.get('card_name', '') }}"></label>
+        <label>Card number<input name="card_number" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" maxlength="23"></label>
+        <div class="field-row">
+          <label>Expiry (MM/YY)<input name="card_expiry" inputmode="numeric" autocomplete="cc-exp" placeholder="08/29" maxlength="7" value="{{ f.get('card_expiry', '') }}"></label>
+          <label>Security code<input name="card_cvc" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></label>
+        </div>
+        <p class="payment-note">Demo: nothing is really charged and only the last 4 digits are saved. Use <strong>4242 4242 4242 4242</strong> with any future date to pay; <strong>4000 0000 0000 0002</strong> is declined.</p>
+      </div>
+    </fieldset>
+
+    <button class="button primary" id="payButton" data-total="₱{{ '%.2f'|format(total) }}">Pay ₱{{ '%.2f'|format(total) }}</button>
+  </form>
+  <div class="checkout-summary"><h2>Order summary</h2>{% for item in items %}<p>{{ item.product.name }} x {{ item.quantity }} <span>₱{{ '%.2f'|format(item.line_total) }}</span></p>{% endfor %}<hr><strong>Total: ₱{{ '%.2f'|format(total) }}</strong></div>
+</section>
+{% endblock %}

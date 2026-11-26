@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Crimson Café{% endblock %}
+{% block content %}
+<section class="hero-banner">
+  <img src="{{ url_for('static', filename='img/' + hero_image) }}" alt="">
+  <div class="hero-content">
+    <p class="eyebrow">CRIMSON CAFÉ / ALL DAY MENU</p>
+    <h1>Good coffee.<br><em>Good food.</em></h1>
+    <p class="intro">A small menu made for slow mornings, quick lunches, and everything in between.</p>
+    <a class="button primary" href="#menu">Explore the menu</a>
+  </div>
+</section>
+
+<section id="menu" class="menu-section">
+  <div class="filters">
+    {% for category in categories %}<a class="{% if selected == category %}selected{% endif %}" href="{{ url_for('menu', category=category, _anchor='menu') }}">{{ category|title }}</a>{% endfor %}
+  </div>
+  <div class="cards">
+    {% for product in products %}
+    <article class="card">
+      <a class="card-img" href="{{ url_for('product', product_id=product.id) }}"><img loading="lazy" src="{{ url_for('static', filename='img/' + product.image) }}" alt="{{ product.name }}"></a>
+      <div class="card-body">
+        <div class="card-top"><h3>{{ product.name }}</h3><strong>₱{{ '%.2f'|format(product.price) }}</strong></div>
+        <p>{{ product.description }}</p>
+        <form class="add-form" action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post"><button class="card-btn">Add to cart</button></form>
+      </div>
+    </article>
+    {% else %}
+    <p class="empty">No products found.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="story" class="story">
+  <p class="eyebrow">ABOUT US</p>
+  <h2>A cozy school café made for good coffee and <em>good moments.</em></h2>
+  <p>Crimson Café is a school-neighborhood café for students, teachers,
+    and coffee lovers. We offer quality drinks, tasty snacks, and a
+    welcoming space to relax, recharge, and enjoy good moments.</p>
+</section>
+
+<section id="locations" class="locations">
+  <p class="eyebrow">VISIT US</p>
+  <h2>Come say <em>hello.</em></h2>
+  <div class="info-cards">
+    <div><small>ADDRESS</small><p>Sct. Borromeo corner Quezon Avenue<br>(Quezon City)</p></div>
+    <div><small>OPEN DAILY</small><p>8:00AM — 3:00AM</p></div>
+    <div><small>CONTACT</small><p><a href="mailto:jcorsame2025@student.nbscollege.edu.ph">jcorsame2025@student.nbscollege.edu.ph</a></p></div>
+  </div>
+</section>
+{% endblock %}

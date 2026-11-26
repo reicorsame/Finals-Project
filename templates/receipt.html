@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Customer Receipt | Crimson Café{% endblock %}
+{% block content %}
+<section class="receipt">
+  <p class="eyebrow">CRIMSON CAFÉ / CUSTOMER RECEIPT</p>
+  <h1>Order confirmed.</h1>
+  <p>Order number: <strong>{{ order.order_number }}</strong></p>
+  <p>Transaction reference: <strong>{{ order.transaction_reference }}</strong></p>
+  <p>Customer: {{ order.customer_name }}</p>
+  <p>Contact: {{ order.contact_number }}</p>
+  <p>Order type: {{ order.order_type }}{% if order.table_number %} / Table {{ order.table_number }}{% endif %}</p>
+  <p>Payment: {{ order.payment_method }} / {{ order.payment_status }}</p>
+  <p>Date: {{ order.created_at }}</p>
+  <hr>
+  {% for item in items %}<p>{{ item.product_name }} x {{ item.quantity }} <span>₱{{ '%.2f'|format(item.subtotal) }}</span></p>{% endfor %}
+  <hr><h2>Total: ₱{{ '%.2f'|format(order.total) }}</h2>
+  {% if order.notes %}<p>Notes: {{ order.notes }}</p>{% endif %}
+  <button class="button secondary" onclick="window.print()">Print / Download PDF</button>
+  <a class="button primary" href="{{ url_for('home') }}">Back to home</a>
+</section>
+{% endblock %}

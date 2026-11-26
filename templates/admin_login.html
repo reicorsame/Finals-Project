@@ -1,0 +1,53 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Admin Login | Crimson Café{% endblock %}
+
+{% block content %}
+
+<section class="login-page">
+
+    <p class="eyebrow">
+        CRIMSON CAFÉ / ADMIN
+    </p>
+
+    <h1>
+        Admin<br>
+        <em>login.</em>
+    </h1>
+
+    <form class="checkout-form" method="post">
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <label>
+            Username
+            <input
+                type="text"
+                name="username"
+                required
+            >
+        </label>
+
+        <label>
+            Password
+            <input
+                type="password"
+                name="password"
+                required
+            >
+        </label>
+
+        <button class="button primary" type="submit">
+            Login
+        </button>
+
+        <p class="payment-note"></p>
+
+    </form>
+
+</section>
+
+{% endblock %}
